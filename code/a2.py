@@ -45,6 +45,8 @@ def round(number, places):
         number *= 10
     number += 0.5
     number = int(number)
+    if places == 0:
+        return number
     numerator = 1
     for j in range(0, places):
         numerator *= 10
@@ -131,8 +133,8 @@ def rgb_to_cmyk(rgb):
     cmyk_magenta = 1 - rgb.green / 255.0
     cmyk_yellow = 1 - rgb.blue / 255.0
     if cmyk_cyan == 1 and cmyk_magenta == 1 and cmyk_yellow == 1:
-        return colormodel.CMYK(0, 0, 0, 1)
-    cmyk_k = math.min(cmyk_cyan, cmyk_magenta, cmyk_yellow)
+        return colormodel.CMYK(0, 0, 0, 100)
+    cmyk_k = min(cmyk_cyan, cmyk_magenta, cmyk_yellow)
     cmyk_c = 100 * (cmyk_cyan - cmyk_k) / (1 - cmyk_k)
     cmyk_m = 100 * (cmyk_magenta - cmyk_k) / (1 - cmyk_k)
     cmyk_y = 100 * (cmyk_yellow - cmyk_k) / (1 - cmyk_k)
@@ -153,9 +155,9 @@ def cmyk_to_rgb(cmyk):
     cmyk_M = cmyk.magenta / 100.0
     cmyk_Y = cmyk.yellow / 100.0
     cmyk_K = cmyk.black / 100.0
-    rgb_R = round(255 * (1 - cmyk_C) / (1 - cmyk_K), 0)
-    rgb_G = round(255 * (1 - cmyk_M) / (1 - cmyk_K), 0)
-    rgb_B = round(255 * (1 - cmyk_Y) / (1 - cmyk_K), 0)
+    rgb_R = round(255 * (1 - cmyk_C) * (1 - cmyk_K), 0)
+    rgb_G = round(255 * (1 - cmyk_M) * (1 - cmyk_K), 0)
+    rgb_B = round(255 * (1 - cmyk_Y) * (1 - cmyk_K), 0)
     return colormodel.RGB(rgb_R, rgb_G, rgb_B)
 
 
@@ -171,8 +173,8 @@ def rgb_to_hsv(rgb):
     rgb_R = rgb.red / 255.0
     rgb_G = rgb.green / 255.0
     rgb_B = rgb.blue / 255.0
-    MAX = math.max(rgb_R, rgb_G, rgb_B)
-    MIN = math.min(rgb_R, rgb_G, rgb_B)
+    MAX = max(rgb_R, rgb_G, rgb_B)
+    MIN = min(rgb_R, rgb_G, rgb_B)
     DIS = MAX - MIN
     if MAX == MIN:
         hsv_H = 0
@@ -232,7 +234,7 @@ def hsv_to_rgb(hsv):
     rgb_R = round(255 * rgb_R, 0)
     rgb_G = round(255 * rgb_G, 0)
     rgb_B = round(255 * rgb_B, 0)
-    return RGB(rgb_R, rgb_G, rgb_B)
+    return colormodel.RGB(rgb_R, rgb_G, rgb_B)
 
 
 # COLOR BLIND FILE SUPPORT
